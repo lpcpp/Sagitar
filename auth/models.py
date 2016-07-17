@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
 import mongoengine as models
-from datetime import datetime
 from auth import enums
 
 
@@ -10,7 +10,7 @@ class Member(models.Document):
     age = models.IntField(required=False)    # 年龄
     sex = models.IntField(choices=enums.SEX_LIST, required=False)  # 性别
     mobile = models.StringField(required=False)    # 电话
-    create_time = models.DateTimeField(default=datetime.now)  # 创建时间
+    create_time = models.DateTimeField(default=datetime.datetime.now)  # 创建时间
     status = models.IntField(choices=enums.MEMBER_STATUS_LIST, default=enums.MEMBER_STATUS_NORMAL, required=True)  # 用户状态
     custom_attr = models.DictField()    # 定制属性
 
@@ -32,9 +32,9 @@ class Address(models.Document):
         return str(self.id)
 
 
-class Comment(models.Document):
+class Comment(models.document):
     member_id = models.StringField()
-    create_time = models.DateTimeField(default=datetime.now)
+    create_time = models.DateTimeField(default=datetime.datetime.now)
     content = models.StringField(min_length=10, max_length=200)
     star = models.IntField()  # 从0星到5星
     status = models.IntField(choices=enums.COMMENT_STATUS_LIST, default=enums.COMMENT_STATUS_NORMAL, required=True)  # 用户状态
