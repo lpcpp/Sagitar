@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import index
 import auth.urls
+import canteen.urls
+import biz.urls
 
 
 urlpatterns = [
@@ -8,4 +10,4 @@ urlpatterns = [
 ]
 
 
-urlpatterns += auth.urls.urlpatterns
+urlpatterns += auth.urls.urlpatterns + canteen.urls.urlpatterns + biz.urls.urlpatterns

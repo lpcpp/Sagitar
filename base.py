@@ -11,3 +11,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def check_xsrf_cookie(self):
         return
+
+
+class Model(object):
+    @property
+    def oid(self):
+        return str(self.id)

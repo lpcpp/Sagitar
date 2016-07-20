@@ -1,30 +1,37 @@
 # -*- coding: utf-8 -*-
-import mongonengine as models
+import mongoengine as models
+from base import Model
 from datetime import datetime
+from biz import enums
 
 
-class FoodType(models.Document):
+class FoodType(Model, models.Document):
     name = models.StringField()
+    create_time = models.DateTimeField(default=datetime.now)
+    status = models.IntField(default=enums.FOODTYPE_STATUS_NORMAL)
 
 
-class Food(models.Document):
-    food_type = models.StringField()
+class Food(Model, models.Document):
+    foodtype = models.StringField()
     name = models.StringField()
     price = models.FloatField()
     create_time = models.DateTimeField(default=datetime.now)
+    status = models.IntField(default=enums.FOOD_STATUS_NORMAL)
 
 
-class FoodItem(models.Document):
+class FoodItem(Model, models.Document):
     food_id = models.StringField()
     num = models.IntField()
 
 
-class Combo(models.Document):  # 套餐
+class Combo(Model, models.Document):  # 套餐
     food_item_list = models.ListField()
     price = models.FloatField()
+    create_time = models.DateTimeField(default=datetime.now)
+    status = models.IntField()
 
 
-class ComboItem(models.Document):
+class ComboItem(Model, models.Document):
     combo_id = models.StringField()
     num = models.IntField()
 
@@ -37,3 +44,4 @@ class Order(models.Document):
     address = models.StringField()
     actual_cost = models.FloatField()   # 实际消费
     benefit = models.FloatField()       # 优惠
+    status = models.IntField()
