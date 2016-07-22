@@ -50,3 +50,63 @@ def update_food(food_id, **kwargs):
             food[key] = value
     food.save()
     return food
+
+
+def get_cart_by_member_id(member_id):
+    """
+    cart = redis.get(member_id)
+    return cart
+    """
+
+
+def get_fooditem(fooditem_id):
+    try:
+        fooditem = models.FoodItem.objects.get(id=fooditem_id)
+    except:
+        fooditem = None
+
+    return fooditem
+
+
+def get_fooditem_list(fooditem_id_list):
+    fooditem_list = []
+    for fooditem_id in fooditem_id_list:
+        fooditem = get_fooditem(fooditem_id)
+        fooditem_list.append(fooditem)
+
+    return fooditem_list
+
+
+def get_comboitem(comboitem_id):
+    try:
+        comboitem = models.ComboItem.objects.get(id=comboitem_id)
+    except:
+        comboitem = None
+
+    return comboitem
+
+
+def get_comboitem_list(comboitem_id_list):
+    comboitem_list = []
+    for comboitem_id in comboitem_id_list:
+        comboitem = get_comboitem(comboitem_id)
+        comboitem_list.append(comboitem)
+
+    return comboitem_list
+
+
+def update_cart(fooditem_id, comboitem_id):
+    cart = get_cart_by_member_id(member_id)
+    if fooditem_id:
+        if fooditem_id in cart.get('fooditem_id_list'):
+            cart.fooditem_id_list[fooditem_id] += 1
+        else:
+            cart.fooditem_id_list[fooditem_id] = 1
+
+    if comboitem_id:
+        if comboitem_id in cart.get('comboitem_id_list'):
+            cart.comboitem_id_list[comboitem_id] += 1
+        else:
+            cart.comboitem_id_list[comboitem_id] = 1
+
+    return cart

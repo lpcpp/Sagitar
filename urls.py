@@ -7,6 +7,7 @@ import biz.urls
 
 urlpatterns = [
     (r"/?", index.IndexHandler),
+    (r"/test/?", index.TestHandler),
 ]
 
 
