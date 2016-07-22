@@ -12,7 +12,7 @@ class FoodType(Model, models.Document):
 
 
 class Food(Model, models.Document):
-    foodtype = models.StringField()
+    foodtype_id = models.StringField()
     name = models.StringField()
     price = models.FloatField()
     create_time = models.DateTimeField(default=datetime.now)

@@ -54,10 +54,10 @@ class FoodsHandler(base.BaseHandler):
         self.write(json.dumps(result))
 
     def post(self):
-        foodtype = self.get_argument('foodtype', '')
+        foodtype_id = self.get_argument('foodtype_id', '')
         name = self.get_argument('name', '')
-        price = self.get_argument('price', '')
-        food = dao.create_food(foodtype=foodtype, name=name, price=price)
+        price = float(self.get_argument('price', 0))
+        food = dao.create_food(foodtype_id=foodtype_id, name=name, price=price)
 
         result = {'status_code': 200, 'result': food.oid}
         self.write(json.dumps(result))
@@ -65,13 +65,14 @@ class FoodsHandler(base.BaseHandler):
 
 class FoodHandler(base.BaseHandler):
     def get(self, food_id):
-        food = dao.get_food()
+        food = dao.get_food(food_id)
         result = {'status_code': 200, 'result': food.to_json()}
         self.write(json.dumps(result))
 
     def put(self, food_id):
         name = self.get_argument('name', '')
-        food = dao.update_food(food_id, name=name)
+        price = float(self.get_argument('price', 0))
+        food = dao.update_food(food_id, name=name, price=price)
 
         result = {'status_code': 200, 'result': food.oid}
         self.write(json.dumps(result))
@@ -81,3 +82,6 @@ class FoodHandler(base.BaseHandler):
 
         result = {'status_code': 200, 'result': food.oid}
         self.write(json.dumps(result))
+
+
+

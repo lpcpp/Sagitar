@@ -25,3 +25,29 @@ def update_foodtype(foodtype_id, **kwargs):
 
     foodtype.save()
     return foodtype
+
+
+def get_food_list():
+    food_list = models.Food.objects.all()
+    return food_list
+
+
+def create_food(foodtype_id="", name="", price=""):
+    print 111, name
+    food = models.Food(foodtype_id=foodtype_id, name=name, price=price)
+    food.save()
+    return food
+
+
+def get_food(food_id):
+    food = models.Food.objects.get(id=food_id)
+    return food
+
+
+def update_food(food_id, **kwargs):
+    food = get_food(food_id)
+    for key, value in kwargs.iteritems():
+        if value:
+            food[key] = value
+    food.save()
+    return food
