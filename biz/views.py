@@ -82,6 +82,3 @@ class FoodHandler(base.BaseHandler):
 
         result = {'status_code': 200, 'result': food.oid}
         self.write(json.dumps(result))
-
-
-

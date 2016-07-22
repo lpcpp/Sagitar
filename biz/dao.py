@@ -33,7 +33,6 @@ def get_food_list():
 
 
 def create_food(foodtype_id="", name="", price=""):
-    print 111, name
     food = models.Food(foodtype_id=foodtype_id, name=name, price=price)
     food.save()
     return food
