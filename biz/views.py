@@ -82,3 +82,38 @@ class FoodHandler(base.BaseHandler):
 
         result = {'status_code': 200, 'result': food.oid}
         self.write(json.dumps(result))
+
+
+class OrdersHandler(base.BaseHandler):
+    def get(self):
+        order_list = dao.get_order_list()
+        result = []
+        for order in order_list:
+            result.append(order.to_json())
+
+        result = {'status_code': 200, 'result': result}
+        self.write(json.dumps(result))
+
+    def post(self):
+        member_id = self.get_argument('member_id')
+        cart = dao.get_cart_by_member_id(member_id)
+        print cart
+        if cart:
+            cart = eval(cart)
+
+        food_id_list = cart.get('food_id_list', {})
+        food_item_list = []
+        for food_id, food_num in food_id_list.iteritems():
+            fooditem = dao.create_fooditem(food_id=food_id, num=food_num)
+            food_item_list.append(fooditem)
+
+        combo_id_list = []
+        order = dao.create_order(food_item_list=food_item_list, combo_id_list=combo_id_list, member_id=member_id)
+        dao.clean_cart(member_id)
+        result = {'status_code': 200, 'result': order.to_json()}
+        self.write(result)
+
+
+class OrderHandler(base.BaseHandler):
+    def get(self):
+        pass

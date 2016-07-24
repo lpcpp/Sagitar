@@ -11,6 +11,11 @@ DB_PORT = 27017
 PORT = '8000'
 SECRET_KEY = 'xw886xItZp007qK9nyutCgGSEaojaGsrrZF8NzWL'
 
+
+REDIS_HOST = '127.0.0.1'
+REDIS_PORT = 6379
+REDIS_DB = 0
+
 settings = dict(
     cookie_secret=SECRET_KEY,
     login_url="/login/",

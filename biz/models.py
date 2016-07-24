@@ -21,7 +21,7 @@ class Food(Model, models.Document):
 
 class FoodItem(Model, models.Document):
     food_id = models.StringField()
-    num = models.IntField()
+    num = models.IntField(default=0)
 
 
 class Combo(Model, models.Document):  # 套餐
@@ -38,8 +38,8 @@ class ComboItem(Model, models.Document):
 
 class Order(models.Document):
     food_item_list = models.ListField()
-    combo_id = models.StringField()
-    create_time = models.DateTimeField()
+    combo_id_list = models.ListField()
+    create_time = models.DateTimeField(default=datetime.now)
     member_id = models.StringField()
     address = models.StringField()
     actual_cost = models.FloatField()   # 实际消费

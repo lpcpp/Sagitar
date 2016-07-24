@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from biz import models
+from common.utils import connect_redis
+
+
+redis_conn = connect_redis()
 
 
 def get_foodtype_list():
@@ -32,14 +36,37 @@ def get_food_list():
     return food_list
 
 
-def create_food(foodtype_id="", name="", price=""):
-    food = models.Food(foodtype_id=foodtype_id, name=name, price=price)
-    food.save()
+def get_food(food_id):
+    food = models.Food.objects.get(id=food_id)
     return food
 
 
-def get_food(food_id):
-    food = models.Food.objects.get(id=food_id)
+def get_food_list_by_id_list(food_id_list):
+    food_list = []
+    for food_id in food_id_list:
+        food = get_food(food_id)
+        food_list.append(food)
+
+    return food_list
+
+
+def get_combo(combo_id):
+    combo = models.Combo.objects.get(id=combo_id)
+    return combo
+
+
+def get_combo_list_by_id_list(combo_id_list):
+    combo_list = []
+    for combo_id in combo_id_list:
+        combo = get_combo(combo_id)
+        combo_list.append(combo)
+
+    return combo_list
+
+
+def create_food(foodtype_id="", name="", price=""):
+    food = models.Food(foodtype_id=foodtype_id, name=name, price=price)
+    food.save()
     return food
 
 
@@ -53,10 +80,10 @@ def update_food(food_id, **kwargs):
 
 
 def get_cart_by_member_id(member_id):
-    """
-    cart = redis.get(member_id)
+    cart = redis_conn.get(member_id)
+    if not cart:
+        return {}
     return cart
-    """
 
 
 def get_fooditem(fooditem_id):
@@ -95,18 +122,41 @@ def get_comboitem_list(comboitem_id_list):
     return comboitem_list
 
 
-def update_cart(fooditem_id, comboitem_id):
+def redis_set(key, value):
+    redis_conn.set(key, value)
+
+
+def update_cart(member_id, food_id, combo_id):
     cart = get_cart_by_member_id(member_id)
-    if fooditem_id:
-        if fooditem_id in cart.get('fooditem_id_list'):
-            cart.fooditem_id_list[fooditem_id] += 1
+    if cart:
+        cart = eval(cart)
+    if food_id:
+        if food_id in cart.get('food_id_list', []):
+            cart['food_id_list'][food_id] += 1
         else:
-            cart.fooditem_id_list[fooditem_id] = 1
+            cart['food_id_list'] = {food_id: 1}
 
-    if comboitem_id:
-        if comboitem_id in cart.get('comboitem_id_list'):
-            cart.comboitem_id_list[comboitem_id] += 1
+    if combo_id:
+        if combo_id in cart.get('combo_id_list', []):
+            cart.combo_id_list[combo_id] += 1
         else:
-            cart.comboitem_id_list[comboitem_id] = 1
+            cart.combo_id_list[combo_id] = 1
 
+    redis_set(member_id, cart)
     return cart
+
+
+def create_fooditem(food_id='', num=''):
+    fooditem = models.FoodItem(food_id=food_id, num=num)
+    fooditem.save()
+    return fooditem
+
+
+def create_order(food_item_list=[], combo_id_list=[], member_id='', address=''):
+    order = models.Order(food_item_list=food_item_list, combo_id_list=combo_id_list, member_id=member_id, address=address)
+    order.save()
+    return order
+
+
+def clean_cart(member_id):
+    redis_set(member_id, {})

@@ -7,22 +7,27 @@ class CartHandler(BaseHandler):
     def get(self):
         member_id = self.get_argument('member_id')
         cart = dao.get_cart_by_member_id(member_id)
-        fooditem_list = dao.get_fooditem_list(cart.get('food_item_id_list', []))
-        comboitem_list = dao.get_comboitem_list(cart.get('combo_item_id_list', []))
-        fooditem_json_list = []
-        comboitem_json_list = []
-        for fooditem in fooditem_list:
-            fooditem_json_list.append(fooditem.to_json())
-        for comboitem in comboitem_list:
-            comboitem_json_list.append(comboitem.to_json())
+        if cart:
+            cart = eval(cart)
+        foods_dict = cart.get('food_id_list', {})
+        combo_list = dao.get_combo_list_by_id_list(cart.get('combo_id_list', {}))
+        food_json_list = []
+        combo_json_list = []
+        for food_id, food_num in foods_dict.iteritems():
+            food = dao.get_food(food_id)
+            food_json_list.append((food.to_json(), food_num))
 
-        result = {'fooditem_list': fooditem_json_list, 'comboitem_list': comboitem_json_list}
+        for combo in combo_list:
+            combo_json_list.append(combo.to_json())
 
-        self.write(json.dumps({'status_code': 200, 'result': result}))
+        result = {'food_list': food_json_list, 'combo_list': combo_json_list}
+
+        self.write({'status_code': 200, 'result': result})
         return
 
     def put(self):
-        fooditem_id = self.get_arguemnt('fooditem_id')
-        comboitem_id = self.get_arguemnt('comboitem_id')
-        cart = dao.update_cart(fooditem_id=fooditem_id, comboitem_id=comboitem_id)
-        self.write(json.dumps(cart.to_json()))
+        member_id = self.get_argument('member_id')
+        food_id = self.get_argument('food_id', '')
+        combo_id = self.get_argument('combo_id', '')
+        cart = dao.update_cart(member_id=member_id, food_id=food_id, combo_id=combo_id)
+        self.write(json.dumps(cart))
