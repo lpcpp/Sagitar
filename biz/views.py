@@ -97,7 +97,6 @@ class OrdersHandler(base.BaseHandler):
     def post(self):
         member_id = self.get_argument('member_id')
         cart = dao.get_cart_by_member_id(member_id)
-        print cart
         if cart:
             cart = eval(cart)
 
@@ -115,5 +114,52 @@ class OrdersHandler(base.BaseHandler):
 
 
 class OrderHandler(base.BaseHandler):
+    def get(self, order_id):
+        order = dao.get_order(order_id)
+        result = {'status_code': 200, 'result': order.to_json()}
+        self.write(json.dumps(result))
+
+    def put(self, order_id):
+        status = int(self.get_argument('status', 1))
+        order = dao.update_order(order_id, status=status)
+        result = {'status_code': 200, 'result': order.to_json()}
+        self.write(json.dumps(result))
+
+    def delete(self, order_id):
+        order = dao.update_order(order_id, status=enums.ORDER_STATUS_DELETE)
+        result = {'status_code': 200, 'result': order.to_json()}
+        self.write(json.dumps(result))
+
+
+class CombosHandler(base.BaseHandler):
     def get(self):
+        combo_list = dao.get_combo_list()
+        result = []
+        for combo in combo_list:
+            result.append(combo.to_json())
+
+        result = {'status_code': 200, 'result': result}
+        self.write(json.dumps(result))
+
+    def post(self):
+        food_id_list = self.get_argument('food_id_list', '')
+        food_id_list = food_id_list.split('|')
+        print food_id_list
+        price = self.get_argument('price', 0)
+        combo = dao.create_combo(food_id_list=food_id_list, price=price)
+
+        result = {'status_code': 200, 'result': combo.oid}
+        self.write(json.dumps(result))
+
+
+class ComboHandler(base.BaseHandler):
+    def get(self, combo_id):
+        combo = dao.get_combo(combo_id)
+        result = {'status_code': 200, 'result': combo.to_json()}
+        self.write(json.dumps(result))
+
+    def put(self, combo_id):
+        pass
+
+    def delete(self, combo_id):
         pass

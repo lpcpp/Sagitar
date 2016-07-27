@@ -130,17 +130,21 @@ def update_cart(member_id, food_id, combo_id):
     cart = get_cart_by_member_id(member_id)
     if cart:
         cart = eval(cart)
+    else:
+        cart = {'food_id_list': {}, 'combo_id_list': {}}
+
     if food_id:
         if food_id in cart.get('food_id_list', []):
             cart['food_id_list'][food_id] += 1
         else:
-            cart['food_id_list'] = {food_id: 1}
+            cart['food_id_list'][food_id] = 1
 
     if combo_id:
-        if combo_id in cart.get('combo_id_list', []):
-            cart.combo_id_list[combo_id] += 1
+        print cart
+        if combo_id in cart.get('combo_id_list', {}):
+            cart['combo_id_list'][combo_id] += 1
         else:
-            cart.combo_id_list[combo_id] = 1
+            cart['combo_id_list'][combo_id] = 1
 
     redis_set(member_id, cart)
     return cart
@@ -160,3 +164,34 @@ def create_order(food_item_list=[], combo_id_list=[], member_id='', address=''):
 
 def clean_cart(member_id):
     redis_set(member_id, {})
+
+
+def create_combo(food_id_list='', price=''):
+    combo = models.Combo(food_id_list=food_id_list, price=price)
+    combo.save()
+
+    return combo
+
+
+def get_combo_list():
+    combo_list = models.Combo.objects.all()
+    return combo_list
+
+
+def get_order_list():
+    order_list = models.Order.objects.all()
+    return order_list
+
+
+def get_order(order_id):
+    order = models.Order.objects.get(id=order_id)
+    return order
+
+
+def update_order(order_id, **kwargs):
+    order = get_order(order_id)
+    for key, value in kwargs.iteritems():
+        if value:
+            order[key] = value
+    order.save()
+    return order

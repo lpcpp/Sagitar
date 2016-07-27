@@ -9,6 +9,8 @@ urlpatterns = [
     (r"/api/v1/foods/([0-9a-z]+)/?", views.FoodHandler),
     (r"/api/v1/orders/?", views.OrdersHandler),
     (r"/api/v1/orders/([0-9a-z]+)/?", views.OrderHandler),
+    (r"/api/v1/combos/?", views.CombosHandler),
+    (r"/api/v1/combos/([0-9a-z]+)/?", views.ComboHandler),
 
     (r"/ajax/cart/?", ajax.CartHandler),
 ]

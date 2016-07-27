@@ -25,7 +25,7 @@ class FoodItem(Model, models.Document):
 
 
 class Combo(Model, models.Document):  # 套餐
-    food_item_list = models.ListField()
+    food_id_list = models.ListField()
     price = models.FloatField()
     create_time = models.DateTimeField(default=datetime.now)
     status = models.IntField()
@@ -44,4 +44,4 @@ class Order(models.Document):
     address = models.StringField()
     actual_cost = models.FloatField()   # 实际消费
     benefit = models.FloatField()       # 优惠
-    status = models.IntField()
+    status = models.IntField(default=enums.ORDER_STATUS_CREATE, choices=enums.ORDER_STATUS_LIST)
