@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 import base
+from common.paginate import Page
 from biz import dao
 from biz import enums
+from auth import dao as auth_dao
 
 
 class FoodTypesHandler(base.BaseHandler):
@@ -86,12 +88,35 @@ class FoodHandler(base.BaseHandler):
 
 class OrdersHandler(base.BaseHandler):
     def get(self):
+        page_num = int(self.get_argument('page_num', 1))
+        status = self.get_argument('status', '')
+        search_name = self.get_argument('search_name', '')
+        search_content = self.get_argument('search_content', '')
+        items_per_page = abs(int(self.get_argument('items_per_page', 10)))
+        if items_per_page:
+            items_per_page = min(items_per_page, 100)
+        else:
+            items_per_page = 10
+        order_by = self.get_argument('order_by', '')
         order_list = dao.get_order_list()
+        if status:
+            order_list = order_list.filter(status)
+        if order_by:
+            order_list = order_list.order_by(order_by)
+        if search_name and search_content:
+            if search_name == 'member_name':
+                member = auth_dao.get_member_by_name(search_content)
+                if not member:
+                    order_list = []
+                else:
+                    order_list = order_list.filter(member_id=member.oid)
+
+        page = Page(order_list, page=page_num, items_per_page=items_per_page)
         result = []
-        for order in order_list:
+        for order in page:
             result.append(order.to_json())
 
-        result = {'status_code': 200, 'result': result}
+        result = {'status_code': 200, 'result': result, 'current_page': page.page, 'items_per_page': page.items_per_page, 'items_count': page.item_count, 'total_page': page.page_count}
         self.write(json.dumps(result))
 
     def post(self):

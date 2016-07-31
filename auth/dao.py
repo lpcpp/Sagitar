@@ -24,6 +24,14 @@ def get_member(member_id):
     return member
 
 
+def get_member_by_name(name):
+    try:
+        member = models.Member.objects.get(name=name)
+    except:
+        member = None
+    return member
+
+
 def update_member(member_id, **kwargs):
     member = get_member(member_id)
     for key, value in kwargs.iteritems():
