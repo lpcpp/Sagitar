@@ -3,6 +3,7 @@
 import json
 import base
 from auth import dao
+from auth import utils
 from auth import enums
 
 
@@ -29,10 +30,12 @@ class MembersHandler(base.BaseHandler):
 class MemberHandler(base.BaseHandler):
     def get(self, member_id):
         member = dao.get_member(member_id)
+        self.set_secure_cookie('member_id', member.oid)
         result = {'status_code': 200, 'result': member.to_json()}
         self.write(json.dumps(result))
 
-    def put(self, member_id):
+    @utils.authenticated
+    def put(self, member_id, aa=11):
         mobile = self.get_argument('mobile')
         member = dao.update_member(member_id, mobile=mobile)
         result = {'status_code': 200, 'result': member.to_json()}

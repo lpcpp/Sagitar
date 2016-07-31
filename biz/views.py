@@ -5,6 +5,7 @@ from common.paginate import Page
 from biz import dao
 from biz import enums
 from auth import dao as auth_dao
+from auth import utils
 
 
 class FoodTypesHandler(base.BaseHandler):
@@ -87,6 +88,7 @@ class FoodHandler(base.BaseHandler):
 
 
 class OrdersHandler(base.BaseHandler):
+    @utils.authenticated
     def get(self):
         page_num = int(self.get_argument('page_num', 1))
         status = self.get_argument('status', '')
@@ -166,6 +168,7 @@ class CombosHandler(base.BaseHandler):
         result = {'status_code': 200, 'result': result}
         self.write(json.dumps(result))
 
+    @utils.authenticated
     def post(self):
         food_id_list = self.get_argument('food_id_list', '')
         food_id_list = food_id_list.split('|')
